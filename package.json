@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/steamcommunity": "^3.43.5",
     "axios": "^1.6.0",
     "cheerio": "1.0.0-rc.12",
+    "steamcommunity": "^3.47.1",
     "typescript": "^5.2.2"
   }
 }
