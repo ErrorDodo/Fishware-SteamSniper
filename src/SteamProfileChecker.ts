@@ -2,12 +2,12 @@ import { Logger, ConsoleLogger } from "./ConsoleLogger";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
-export interface IWebHelper {
+export interface IProfileChecker {
   // doesProfileExist(url: string): Promise<boolean>;
   doProfilesExist(urls: string[]): Promise<boolean[]>;
 }
 
-export class WebHelper implements IWebHelper {
+export class ProfileChecker implements IProfileChecker {
   private httpClient: typeof axios;
   private logger: Logger;
 

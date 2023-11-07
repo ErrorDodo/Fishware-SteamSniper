@@ -1,7 +1,7 @@
 import axios from "axios";
-import { WebHelper } from "./SteamHelper";
+import { ProfileChecker } from "./SteamProfileChecker";
 
-const webHelper = new WebHelper(axios);
+const webHelper = new ProfileChecker(axios);
 const profileUrls = [
   "https://steamcommunity.com/id/tedlookatmyprofile",
   "https://steamcommunity.com/id/dodowhatyouwantcauseapiratelifeisfree",
