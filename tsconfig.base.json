@@ -14,7 +14,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@fishware/steam-helper": ["libs/steam-helper/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

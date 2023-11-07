@@ -21,7 +21,7 @@
     },
     "test": {
       "cache": true,
-      "inputs": ["default", "^default"]
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"]
     },
     "e2e": {
       "cache": true
