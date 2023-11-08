@@ -72,7 +72,7 @@ export class SteamProfileManager implements ISteamProfileManager {
     community: SteamCommunity,
     profileUrl: string,
     accountName: string,
-    loggedInAccounts: { accountName: string; community: SteamCommunity }[]
+    loggedInAccounts?: { accountName: string; community: SteamCommunity }[]
   ): Promise<string> {
     const combinedUrl = `${this.baseUrl}${profileUrl}`;
 
@@ -93,11 +93,10 @@ export class SteamProfileManager implements ISteamProfileManager {
       community.editProfile(profileUpdate, (err) => {
         if (err) {
           this.logger.error(
-            `An error occurred while updating the profile at URL: ${combinedUrl}: ${err}`
+            `An error occurred on account ${accountName} while updating the profile at URL: ${combinedUrl}: ${err}`
           );
           reject(new Error(`Profile URL ${combinedUrl} is taken.`));
         } else {
-          this.logger.info(`Profile updated at URL: ${combinedUrl}`);
           resolve(`Profile URL ${combinedUrl} is free and has been claimed.`);
         }
       });
