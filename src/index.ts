@@ -12,7 +12,6 @@ const steamLoginManager = new SteamLoginManager(logger);
 // Get profile URLs from a file
 const getProfileUrlsFromFile = (): string[] => {
   try {
-    logger.info(`Current Directory: ${process.cwd()}`);
     const profilesFilePath = "./config/profiles.json";
     if (!fs.existsSync(profilesFilePath)) {
       logger.error("No profiles file found.");

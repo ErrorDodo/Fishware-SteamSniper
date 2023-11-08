@@ -24,9 +24,6 @@ export class SteamLoginManager {
         await this.loginToSteam(loginDetails);
       } catch (error) {
         failedLogins++;
-        this.logger.error(
-          `Failed to log into account ${loginDetails.accountName}: ${error}`
-        );
       }
     }
 
@@ -38,7 +35,6 @@ export class SteamLoginManager {
 
   private getLoginDetailsFromFile(): SteamCommunity.LoginOptions[] {
     try {
-      this.logger.info(`Current Directory: ${process.cwd()}`);
       if (!fs.existsSync("./config/accounts.json")) {
         this.logger.error("No accounts file found.");
         process.exit(1);
