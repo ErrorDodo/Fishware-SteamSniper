@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 18.x
 
-      - uses: ./templates/setup-pnpm
+      - uses: ./.github/templates/setup-pnpm
 
       - name: TypeCheck
         run: tsc -b
