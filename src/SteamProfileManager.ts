@@ -71,8 +71,7 @@ export class SteamProfileManager implements ISteamProfileManager {
   public async performActionWithAccount(
     community: SteamCommunity,
     profileUrl: string,
-    accountName: string,
-    loggedInAccounts?: { accountName: string; community: SteamCommunity }[]
+    accountName: string
   ): Promise<string> {
     const combinedUrl = `${this.baseUrl}${profileUrl}`;
 

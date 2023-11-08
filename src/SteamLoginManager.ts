@@ -2,6 +2,11 @@ import SteamCommunity from "steamcommunity";
 import { Logger, ConsoleLogger } from "./ConsoleLogger";
 import * as fs from "fs";
 
+interface SteamAccount {
+  accountName: string;
+  password: string;
+}
+
 export class SteamLoginManager {
   private loggedInAccounts: {
     accountName: string;
@@ -43,8 +48,8 @@ export class SteamLoginManager {
       const accounts = JSON.parse(rawData);
       this.logger.info("Reading login details from file.");
 
-      return accounts.map((acc: any) => ({
-        accountName: acc.username,
+      return accounts.map((acc: SteamAccount) => ({
+        accountName: acc.accountName,
         password: acc.password,
       }));
     } catch (error) {
@@ -65,26 +70,23 @@ export class SteamLoginManager {
       }
 
       const community = new SteamCommunity();
-      community.login(
-        accountDetails,
-        (err, sessionID, cookies, steamguard, oAuthToken) => {
-          if (err) {
-            this.logger.error(
-              `Login failed for ${accountDetails.accountName}: ${err}`
-            );
-            reject(err);
-          } else {
-            this.logger.info(
-              `Logged in successfully as ${accountDetails.accountName}.`
-            );
-            this.loggedInAccounts.push({
-              accountName: accountDetails.accountName,
-              community,
-            });
-            resolve();
-          }
+      community.login(accountDetails, (err) => {
+        if (err) {
+          this.logger.error(
+            `Login failed for ${accountDetails.accountName}: ${err}`
+          );
+          reject(err);
+        } else {
+          this.logger.info(
+            `Logged in successfully as ${accountDetails.accountName}.`
+          );
+          this.loggedInAccounts.push({
+            accountName: accountDetails.accountName,
+            community,
+          });
+          resolve();
         }
-      );
+      });
     });
   }
 

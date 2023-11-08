@@ -19,25 +19,13 @@ describe("ProfileQueue", () => {
   let profileCheckerMock: SteamProfileManager;
   let logger: Logger;
   let onProfileClaimedCallback: jest.Mock;
-  let steamCommunityMock: any;
 
   beforeEach(() => {
     // Mocking axios with default resolved value
     (axios.get as jest.Mock).mockResolvedValue({ data: "<html></html>" });
 
-    // Mocking SteamCommunity's editProfile method
-    steamCommunityMock = {
-      editProfile: jest.fn((settings, callback) => callback(null)),
-    };
-
     // Setup the logger
     logger = new ConsoleLogger();
-
-    // Setup the SteamProfileManager with the real Logger and mocked axios
-    profileCheckerMock = new SteamProfileManager(axios, logger);
-
-    // Setup the onProfileClaimed callback
-    onProfileClaimedCallback = jest.fn();
 
     // Create a new instance of ProfileQueue with a concurrency of 1
     profileQueue = new ProfileQueue(
