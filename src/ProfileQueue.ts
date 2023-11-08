@@ -31,21 +31,29 @@ export class ProfileQueue {
     completed: (error: Error | null, result?: string) => void
   ) {
     const { profileUrl, account } = task;
-    try {
-      const resultMessage = await this.profileChecker.performActionWithAccount(
-        account.community,
-        profileUrl,
-        account.accountName,
-        [account]
-      );
-      this.logger.info(resultMessage);
-      this.onProfileClaimed(profileUrl);
-      completed(null, profileUrl);
-    } catch (error) {
-      this.logger.error(
-        `An error occurred while performing action on profile: ${error}`
-      );
-      completed(error as Error, profileUrl);
+    const maxAttempts = 3; // Maximum number of attempts
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const resultMessage =
+          await this.profileChecker.performActionWithAccount(
+            account.community,
+            profileUrl,
+            account.accountName,
+            [account]
+          );
+        this.logger.info(resultMessage);
+        this.onProfileClaimed(profileUrl);
+        completed(null, profileUrl); // Call completed with no error on success
+        return; // Exit the loop and function on success
+      } catch (error) {
+        this.logger.error(
+          `Attempt ${attempt} failed for account ${account.accountName}: ${error}`
+        );
+        if (attempt === maxAttempts) {
+          completed(error as Error, profileUrl);
+        }
+      }
     }
   }
 

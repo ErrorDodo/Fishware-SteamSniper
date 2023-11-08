@@ -37,7 +37,7 @@ export class SteamProfileManager implements ISteamProfileManager {
         node.length &&
         node.text().includes("The specified profile could not be found.")
       ) {
-        this.logger.warn(`Profile not found at URL: ${combinedUrl}`);
+        this.logger.info(`Profile not found at URL: ${combinedUrl}`);
         return false;
       }
       this.logger.info(`Profile found at URL: ${combinedUrl}`);
@@ -98,7 +98,7 @@ export class SteamProfileManager implements ISteamProfileManager {
           this.logger.error(
             `An error occurred while updating the profile at URL: ${combinedUrl}: ${err}`
           );
-          reject(`Profile URL ${combinedUrl} is taken.`);
+          reject(new Error(`Profile URL ${combinedUrl} is taken.`));
         } else {
           this.logger.info(`Profile updated at URL: ${combinedUrl}`);
           resolve(`Profile URL ${combinedUrl} is free and has been claimed.`);
