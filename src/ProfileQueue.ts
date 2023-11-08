@@ -39,8 +39,7 @@ export class ProfileQueue {
           await this.profileChecker.performActionWithAccount(
             account.community,
             profileUrl,
-            account.accountName,
-            [account]
+            account.accountName
           );
         this.logger.info(resultMessage);
         this.onProfileClaimed(profileUrl);
