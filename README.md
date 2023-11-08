@@ -42,9 +42,4 @@ This program uses NodeJS to run, you can download it from here [NodeJS](https://
 
 ## TODO
 
-If anyone would like to take these over and make a pull request, feel free to do so.
-
-- [ ] Send a message to a discord webhook when a vanity URL is claimed
-- [ ] Send a friend request to a steam account when a vanity URL is claimed (using the account that claimed it)
-- [ ] Create Github Actions to lint, build and test the code
-- [ ] Create a Dockerfile to run the program in a container
+Todos have been moved over to the issues tab
