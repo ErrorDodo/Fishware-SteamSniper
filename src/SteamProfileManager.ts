@@ -44,7 +44,7 @@ export class SteamProfileManager implements ISteamProfileManager {
       return true;
     } catch (ex) {
       this.logger.error(
-        `An error occurred while checking the profile at URL: ${Comment}`
+        `An error occurred while checking the profile at URL: ${url}`
       );
       // Rethrow the error to handle it in the calling code
       throw ex;

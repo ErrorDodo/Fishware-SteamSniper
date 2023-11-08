@@ -35,7 +35,6 @@ let profileUrls = getProfileUrlsFromFile();
 const onProfileClaimed = (profileUrl: string) => {
   // Remove the claimed profile URL from the list
   profileUrls = profileUrls.filter((url) => url !== profileUrl);
-  logger.info(`Profile ${profileUrl} has been claimed.`);
 };
 
 // Define concurrency level for how many profiles can be processed at once
