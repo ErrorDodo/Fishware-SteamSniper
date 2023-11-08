@@ -2,48 +2,94 @@ import axios from "axios";
 import { SteamProfileManager } from "./SteamProfileManager";
 import { SteamLoginManager } from "./SteamLoginManager";
 import { ConsoleLogger } from "./ConsoleLogger";
+import { ProfileQueue, ProfileTask } from "./ProfileQueue";
+import * as fs from "fs";
 
 const logger = new ConsoleLogger();
 const profileChecker = new SteamProfileManager(axios, logger);
 const steamLoginManager = new SteamLoginManager(logger);
 
-// Add the profile URLs you want to check
-const profileUrls = [`tedlookatmyprofile`];
-
-const checkProfiles = async () => {
-  logger.info("Running a check on the profiles...");
+// Get profile URLs from a file
+const getProfileUrlsFromFile = (): string[] => {
   try {
-    const profilesExist = await profileChecker.doProfilesExist(profileUrls);
-    const loggedInAccounts = steamLoginManager.getLoggedInAccounts();
-
-    profilesExist.forEach((exists, index) => {
-      if (exists) {
-        if (loggedInAccounts.length > 0) {
-          // Choose an account to use (for example, the first one)
-          const accountToUse = loggedInAccounts[0];
-          // Perform an action with that account
-          profileChecker.performActionWithAccount(
-            accountToUse.community,
-            profileUrls[index],
-            accountToUse.accountName,
-            loggedInAccounts
-          );
-        }
-      }
-    });
+    logger.info(`Current Directory: ${process.cwd()}`);
+    const profilesFilePath = "./config/profiles.json";
+    if (!fs.existsSync(profilesFilePath)) {
+      logger.error("No profiles file found.");
+      process.exit(1);
+    }
+    const rawData = fs.readFileSync(profilesFilePath, "utf-8");
+    const profileUrls: string[] = JSON.parse(rawData);
+    logger.info("Reading profile URLs from file.");
+    return profileUrls;
   } catch (error) {
-    logger.error(`An error occurred while checking for the profiles: ${error}`);
+    logger.error(`Error reading profiles file: ${error}`);
+    process.exit(1);
   }
 };
+
+let profileUrls = getProfileUrlsFromFile();
+
+// Define concurrency level for how many profiles can be processed at once
+const concurrencyLevel = 2;
+
+// We can do whatever we want with this callback now
+// For Example:
+//        Log the profile URL that was snipped into a file
+const onProfileClaimed = (profileUrl: string) => {
+  // Remove the claimed profile URL from the list
+  profileUrls = profileUrls.filter((url) => url !== profileUrl);
+  logger.info(`Profile ${profileUrl} has been claimed.`);
+};
+
+const profileQueue = new ProfileQueue(
+  profileChecker,
+  logger,
+  concurrencyLevel,
+  onProfileClaimed
+);
 
 // Initialize Steam logins and then start the profile check routine
 steamLoginManager
   .initializeLogins()
   .then(() => {
     logger.info("All accounts are initialized.");
+    checkProfiles();
     // Run the profile check every 5 seconds
     setInterval(checkProfiles, 5000);
   })
   .catch((error) => {
     logger.error("Failed to initialize one or more Steam logins:", error);
   });
+
+const checkProfiles = async () => {
+  logger.info("Running a check on the profiles...");
+
+  // Ensure there are profiles to check and accounts logged in
+  if (
+    profileUrls.length === 0 ||
+    steamLoginManager.getLoggedInAccounts().length === 0
+  ) {
+    logger.warn("No profiles to check or no accounts available.");
+    return;
+  }
+
+  // Check if profiles exist and add them to the queue
+  try {
+    const profilesExist = await profileChecker.doProfilesExist(profileUrls);
+    const loggedInAccounts = steamLoginManager.getLoggedInAccounts();
+
+    profilesExist.forEach((exists, index) => {
+      if (exists) {
+        const profileUrl = profileUrls[index];
+        const task: ProfileTask = {
+          profileUrl: profileUrl,
+          account: loggedInAccounts[0], // For simplicity, we're always using the first account
+        };
+        profileQueue.addTask(task);
+      }
+    });
+  } catch (error) {
+    logger.error(`An error occurred while checking profiles: ${error}`);
+  }
+};

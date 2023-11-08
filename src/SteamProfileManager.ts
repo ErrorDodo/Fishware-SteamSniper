@@ -1,7 +1,7 @@
 import { Logger, ConsoleLogger } from "./ConsoleLogger";
 import axios from "axios";
 import * as cheerio from "cheerio";
-import SteamCommunity from "steamcommunity";
+import SteamCommunity, { EditProfileSettings } from "steamcommunity";
 
 export interface ISteamProfileManager {
   // doesProfileExist(url: string): Promise<boolean>;
@@ -11,7 +11,7 @@ export interface ISteamProfileManager {
     profileUrl: string,
     accountName: string,
     loggedInAccounts: { accountName: string; community: SteamCommunity }[]
-  ): Promise<void>;
+  ): Promise<string>;
 }
 
 export class SteamProfileManager implements ISteamProfileManager {
@@ -73,38 +73,37 @@ export class SteamProfileManager implements ISteamProfileManager {
     profileUrl: string,
     accountName: string,
     loggedInAccounts: { accountName: string; community: SteamCommunity }[]
-  ): Promise<void> {
-    this.logger.info(`Performing action with account on profile ${profileUrl}`);
-    // community.editProfile(
-    //   {
-    //     customURL: profileUrl,
-    //   },
-    //   (err) => {
-    //     if (err) {
-    //       this.logger.error(
-    //         `An error occurred while performing action on ${profileUrl}: ${err}`
-    //       );
-    //     } else {
-    //       this.logger.info(`Successfully changed URL to ${profileUrl}`);
-    //       const accountIndex = loggedInAccounts.findIndex(
-    //         (acc) => acc.accountName === accountName
-    //       );
-    //       if (accountIndex !== -1) {
-    //         loggedInAccounts.splice(accountIndex, 1);
-    //         this.logger.info(
-    //           `Account ${accountName} has been removed from the list after action.`
-    //         );
-    //       }
-    //     }
-    //   }
-    // );
-    // Perform the action with the given account and profile URL
+  ): Promise<string> {
+    const combinedUrl = `${this.baseUrl}${profileUrl}`;
+    this.logger.info(
+      `Performing action with account on profile ${combinedUrl}`
+    );
 
-    try {
-    } catch (error) {
-      this.logger.error(
-        `An error occurred while performing action on ${profileUrl}:`
-      );
-    }
+    const profileUpdate: EditProfileSettings = {
+      customURL: profileUrl,
+      name: "Sniped by Fishware",
+      realName: "Sniped by Fishware",
+      summary: "Sniped by Fishware",
+      country: "US",
+      state: "CA",
+      city: "San Francisco",
+      background: 1,
+      featuredBadge: 1,
+      primaryGroup: "0",
+    };
+
+    return new Promise((resolve, reject) => {
+      community.editProfile(profileUpdate, (err) => {
+        if (err) {
+          this.logger.error(
+            `An error occurred while updating the profile at URL: ${combinedUrl}: ${err}`
+          );
+          reject(`Profile URL ${combinedUrl} is taken.`);
+        } else {
+          this.logger.info(`Profile updated at URL: ${combinedUrl}`);
+          resolve(`Profile URL ${combinedUrl} is free and has been claimed.`);
+        }
+      });
+    });
   }
 }
