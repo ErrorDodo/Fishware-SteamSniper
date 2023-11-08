@@ -78,7 +78,6 @@ const checkProfiles = async () => {
 
   const loggedInAccounts = steamLoginManager.getLoggedInAccounts();
 
-  // Reset the count when all accounts have been used
   if (tasksAssigned >= loggedInAccounts.length) {
     logger.error("All accounts have been utilized.");
     process.exit(1);
