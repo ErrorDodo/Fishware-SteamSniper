@@ -1,6 +1,6 @@
 # Steam Vanity URL Sniper
 
-Note that I have no actually tested this, it should work logically. If you find any bugs, please open an issue or a pull request.
+Note that I have not actually tested this, it should work logically. If you find any bugs, please open an issue or a pull request.
 
 ## What is this?
 
