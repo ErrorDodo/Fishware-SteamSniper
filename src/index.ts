@@ -30,9 +30,6 @@ const getProfileUrlsFromFile = (): string[] => {
 
 let profileUrls = getProfileUrlsFromFile();
 
-// Define concurrency level for how many profiles can be processed at once
-const concurrencyLevel = 2;
-
 // We can do whatever we want with this callback now
 // For Example:
 //        Log the profile URL that was snipped into a file
@@ -42,6 +39,8 @@ const onProfileClaimed = (profileUrl: string) => {
   logger.info(`Profile ${profileUrl} has been claimed.`);
 };
 
+// Define concurrency level for how many profiles can be processed at once
+const concurrencyLevel = 2;
 const profileQueue = new ProfileQueue(
   profileChecker,
   logger,
@@ -62,6 +61,11 @@ steamLoginManager
     logger.error("Failed to initialize one or more Steam logins:", error);
   });
 
+// Keep track of the index of the account to use next
+let currentAccountIndex = 0;
+// Keep track of the number of tasks assigned to check when all accounts have been used
+let tasksAssigned = 0;
+
 const checkProfiles = async () => {
   logger.info("Running a check on the profiles...");
 
@@ -74,17 +78,31 @@ const checkProfiles = async () => {
     return;
   }
 
+  const loggedInAccounts = steamLoginManager.getLoggedInAccounts();
+
+  // Reset the count when all accounts have been used
+  if (tasksAssigned >= loggedInAccounts.length) {
+    logger.error("All accounts have been utilized.");
+    process.exit(1);
+  }
+
   // Check if profiles exist and add them to the queue
   try {
     const profilesExist = await profileChecker.doProfilesExist(profileUrls);
-    const loggedInAccounts = steamLoginManager.getLoggedInAccounts();
 
     profilesExist.forEach((exists, index) => {
       if (exists) {
         const profileUrl = profileUrls[index];
+
+        // Use the next account in the list for the task
+        const accountToUse = loggedInAccounts[currentAccountIndex];
+        currentAccountIndex =
+          (currentAccountIndex + 1) % loggedInAccounts.length; // Wrap the index after the last account
+        tasksAssigned++; // Increment the number of tasks assigned
+
         const task: ProfileTask = {
           profileUrl: profileUrl,
-          account: loggedInAccounts[0], // For simplicity, we're always using the first account
+          account: accountToUse,
         };
         profileQueue.addTask(task);
       }
