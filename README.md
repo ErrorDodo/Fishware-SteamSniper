@@ -4,7 +4,7 @@ Note that I have not actually tested this, it should work logically. If you find
 
 ## What is this?
 
-This is a simple script that will check if a vanity URL is available on Steam, you can set/edit. [profiles.json](./config//accounts.example.json) is an example of what it would look like. It will check a list of words and see if they are available. If they are, it will claim them with accounts that you put in a file. [accounts.json](./config/accounts.example.json) is an example of what the file should look like.
+This is a simple script that will check if a vanity URL is available on Steam, you can set/edit. [profiles.json](./config//profiles.example.json) is an example of what it would look like. It will check a list of words and see if they are available. If they are, it will claim them with accounts that you put in a file. [accounts.json](./config/accounts.example.json) is an example of what the file should look like.
 
 For an easier view of the 2 json files needed:
 
