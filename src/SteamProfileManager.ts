@@ -75,21 +75,18 @@ export class SteamProfileManager implements ISteamProfileManager {
     loggedInAccounts: { accountName: string; community: SteamCommunity }[]
   ): Promise<string> {
     const combinedUrl = `${this.baseUrl}${profileUrl}`;
-    this.logger.info(
-      `Performing action with account on profile ${combinedUrl}`
-    );
 
     const profileUpdate: EditProfileSettings = {
       customURL: profileUrl,
       name: "Sniped by Fishware",
-      realName: "Sniped by Fishware",
-      summary: "Sniped by Fishware",
-      country: "US",
-      state: "CA",
-      city: "San Francisco",
-      background: 1,
-      featuredBadge: 1,
-      primaryGroup: "0",
+      realName: "",
+      summary: "https://github.com/ErrorDodo/Fishware-SteamSniper",
+      country: "",
+      state: "",
+      city: "",
+      background: "",
+      featuredBadge: "",
+      primaryGroup: "",
     };
 
     return new Promise((resolve, reject) => {
