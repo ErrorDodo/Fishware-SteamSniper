@@ -44,13 +44,16 @@ export class ProfileQueue {
           );
         this.logger.info(resultMessage);
         this.onProfileClaimed(profileUrl);
-        completed(null, profileUrl); // Call completed with no error on success
-        return; // Exit the loop and function on success
+        completed(null, profileUrl);
+        return;
       } catch (error) {
         this.logger.error(
-          `Attempt ${attempt} failed for account ${account.accountName}: ${error}`
+          `Attempt ${attempt} failed for account ${account.accountName}`
         );
         if (attempt === maxAttempts) {
+          this.logger.error(
+            `Attempts exhausted for account ${account.accountName} to change to profile ${profileUrl}`
+          );
           completed(error as Error, profileUrl);
         }
       }
@@ -58,9 +61,7 @@ export class ProfileQueue {
   }
 
   private handleError(err: Error, task: ProfileTask) {
-    this.logger.error(
-      `Error processing profile ${task.profileUrl}: ${err.message}`
-    );
+    this.logger.error(`Error processing profile ${task.profileUrl}`);
   }
 
   public addTask(task: ProfileTask) {

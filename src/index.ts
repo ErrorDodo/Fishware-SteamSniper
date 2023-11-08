@@ -90,7 +90,7 @@ const checkProfiles = async () => {
     const profilesExist = await profileChecker.doProfilesExist(profileUrls);
 
     profilesExist.forEach((exists, index) => {
-      if (exists) {
+      if (!exists) {
         const profileUrl = profileUrls[index];
 
         // Use the next account in the list for the task
