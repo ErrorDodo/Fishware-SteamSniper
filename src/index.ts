@@ -4,41 +4,34 @@ import { SteamLoginManager } from "./SteamLoginManager";
 import { ConsoleLogger } from "./ConsoleLogger";
 import { ProfileQueue, ProfileTask } from "./ProfileQueue";
 import * as fs from "fs";
+import { getAppSettingsFromFile, getProfileUrlsFromFile } from "./Settings";
 
 const logger = new ConsoleLogger();
 const profileChecker = new SteamProfileManager(axios, logger);
 const steamLoginManager = new SteamLoginManager(logger);
 
-// Get profile URLs from a file
-const getProfileUrlsFromFile = (): string[] => {
-  try {
-    const profilesFilePath = "./config/profiles.json";
-    if (!fs.existsSync(profilesFilePath)) {
-      logger.error("No profiles file found.");
-      process.exit(1);
-    }
-    const rawData = fs.readFileSync(profilesFilePath, "utf-8");
-    const profileUrls: string[] = JSON.parse(rawData);
-    logger.info("Reading profile URLs from file.");
-    return profileUrls;
-  } catch (error) {
-    logger.error(`Error reading profiles file: ${error}`);
-    process.exit(1);
-  }
-};
-
 let profileUrls = getProfileUrlsFromFile();
+const appSettings = getAppSettingsFromFile();
 
 // We can do whatever we want with this callback now
 // For Example:
 //        Log the profile URL that was snipped into a file
-const onProfileClaimed = (profileUrl: string) => {
+const onProfileClaimed = (profileUrl: string, accountName: string) => {
+  const claimedProfilesFilePath = "./claimedProfiles.json";
+  const claimedProfiles = JSON.parse(
+    fs.readFileSync(claimedProfilesFilePath, "utf-8")
+  );
+  claimedProfiles.push({ profileUrl, accountName });
+  fs.writeFileSync(
+    claimedProfilesFilePath,
+    JSON.stringify(claimedProfiles, null, 2)
+  );
   // Remove the claimed profile URL from the list
   profileUrls = profileUrls.filter((url) => url !== profileUrl);
 };
 
 // Define concurrency level for how many profiles can be processed at once
-const concurrencyLevel = 2;
+const concurrencyLevel = appSettings.ConcurrentProfileChecks;
 const profileQueue = new ProfileQueue(
   profileChecker,
   logger,
@@ -53,7 +46,7 @@ steamLoginManager
     logger.info("All accounts are initialized.");
     checkProfiles();
     // Run the profile check every 5 seconds
-    setInterval(checkProfiles, 5000);
+    setInterval(checkProfiles, appSettings.ProfileCheckIntervalInMilliseconds);
   })
   .catch((error) => {
     logger.error("Failed to initialize one or more Steam logins:", error);
@@ -67,12 +60,9 @@ let tasksAssigned = 0;
 const checkProfiles = async () => {
   logger.info("Running a check on the profiles...");
 
-  // Ensure there are profiles to check and accounts logged in
-  if (
-    profileUrls.length === 0 ||
-    steamLoginManager.getLoggedInAccounts().length === 0
-  ) {
-    logger.warn("No profiles to check or no accounts available.");
+  // Ensure there are profiles to check
+  if (profileUrls.length === 0) {
+    logger.warn("No profiles to check");
     return;
   }
 

@@ -1,11 +1,6 @@
 import SteamCommunity from "steamcommunity";
 import { Logger, ConsoleLogger } from "./ConsoleLogger";
-import * as fs from "fs";
-
-interface SteamAccount {
-  accountName: string;
-  password: string;
-}
+import { getLoginDetailsFromFile } from "./Settings";
 
 export class SteamLoginManager {
   private loggedInAccounts: {
@@ -20,7 +15,7 @@ export class SteamLoginManager {
 
   public async initializeLogins() {
     const loginDetailsArray: SteamCommunity.LoginOptions[] =
-      this.getLoginDetailsFromFile();
+      getLoginDetailsFromFile();
 
     let failedLogins = 0;
 
@@ -34,26 +29,6 @@ export class SteamLoginManager {
 
     if (failedLogins === loginDetailsArray.length) {
       this.logger.error("All account logins have failed.");
-      process.exit(1);
-    }
-  }
-
-  private getLoginDetailsFromFile(): SteamCommunity.LoginOptions[] {
-    try {
-      if (!fs.existsSync("./config/accounts.json")) {
-        this.logger.error("No accounts file found.");
-        process.exit(1);
-      }
-      const rawData = fs.readFileSync("./config/accounts.json", "utf-8");
-      const accounts = JSON.parse(rawData);
-      this.logger.info("Reading login details from file.");
-
-      return accounts.map((acc: SteamAccount) => ({
-        accountName: acc.accountName,
-        password: acc.password,
-      }));
-    } catch (error) {
-      this.logger.error(`Error reading accounts file: ${error}}`);
       process.exit(1);
     }
   }

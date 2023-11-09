@@ -1,4 +1,3 @@
 node_modules
 dist
-config/accounts.json
-config/profiles.json
+config/settings.json

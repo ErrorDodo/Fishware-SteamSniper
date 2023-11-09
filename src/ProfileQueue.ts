@@ -13,13 +13,13 @@ export interface ProfileTask {
 
 export class ProfileQueue {
   private queue: QueueObject<ProfileTask>;
-  private onProfileClaimed: (profileUrl: string) => void;
+  private onProfileClaimed: (profileUrl: string, accountName: string) => void;
 
   constructor(
     private profileChecker: SteamProfileManager,
     private logger: Logger,
     concurrencyLevel: number,
-    onProfileClaimedCallback: (profileUrl: string) => void
+    onProfileClaimedCallback: (profileUrl: string, accountName: string) => void
   ) {
     this.queue = async.queue(this.processTask.bind(this), concurrencyLevel);
     this.queue.error(this.handleError.bind(this));
@@ -42,7 +42,7 @@ export class ProfileQueue {
             account.accountName
           );
         this.logger.info(resultMessage);
-        this.onProfileClaimed(profileUrl);
+        this.onProfileClaimed(profileUrl, account.accountName);
         completed(null, profileUrl);
         return;
       } catch (error) {
