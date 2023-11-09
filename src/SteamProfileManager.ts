@@ -3,18 +3,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import SteamCommunity, { EditProfileSettings } from "steamcommunity";
 
-export interface ISteamProfileManager {
-  // doesProfileExist(url: string): Promise<boolean>;
-  doProfilesExist(urls: string[]): Promise<boolean[]>;
-  performActionWithAccount(
-    community: SteamCommunity,
-    profileUrl: string,
-    accountName: string,
-    loggedInAccounts: { accountName: string; community: SteamCommunity }[]
-  ): Promise<string>;
-}
-
-export class SteamProfileManager implements ISteamProfileManager {
+export class SteamProfileManager {
   private httpClient: typeof axios;
   private logger: Logger;
   private baseUrl = "https://steamcommunity.com/id/";
