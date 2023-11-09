@@ -4,35 +4,36 @@ Note that I have not actually tested this, it should work logically. If you find
 
 ## What is this?
 
-This is a simple script that will check if a vanity URL is available on Steam, you can set/edit. [profiles.json](./config//profiles.example.json) is an example of what it would look like. It will check a list of words and see if they are available. If they are, it will claim them with accounts that you put in a file. [accounts.json](./config/accounts.example.json) is an example of what the file should look like.
+This is a simple script that will check if a vanity URL is available on Steam, you can set/edit the settings of the program (accounts to use, profiles to check and general app settings) in the `settings.json` and example of what it should look like can be found here [settings.example.json](./config/settings.example.json).
 
-For an easier view of the 2 json files needed:
+For an easier view of what the settings should look like, here is an example of what it should look like:
 
 ```json
-// accounts,json
-[
-  {
-    "username": "username1",
-    "password": "password1"
-  },
-  {
-    "username": "username2",
-    "password": "password2"
-  },
-  {
-    "username": "username3",
-    "password": "password3"
+{
+  "profiles": [
+    "someProfile",
+    "anotherProfile",
+    "onemoreProfile"
+  ],
+  "accounts": [
+    {
+      "username": "username1",
+      "password": "password1"
+    },
+    {
+      "username": "username2",
+      "password": "password2"
+    },
+    {
+      "username": "username3",
+      "password": "password3"
+    }
+  ],
+  "settings": {
+    "ProfileCheckIntervalInSeconds": 5,
+    "ConcurrentProfileChecks": 2
   }
-]
-```
-
-```json
-// profiles.json
-[
-    "tedlookatmyprofile", 
-    "tedlookatmyprofile1", 
-    "tedlookatmyprofile2"
-]
+}
 
 ```
 

@@ -79,7 +79,7 @@ export class SteamProfileManager implements ISteamProfileManager {
       customURL: profileUrl,
       name: "Sniped by Fishware",
       realName: "",
-      summary: "https://github.com/ErrorDodo/Fishware-SteamSniper",
+      summary: "",
       country: "",
       state: "",
       city: "",
