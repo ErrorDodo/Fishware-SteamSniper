@@ -30,7 +30,7 @@ For an easier view of what the settings should look like, here is an example of 
     }
   ],
   "settings": {
-    "ProfileCheckIntervalInMilliseconds": 5,
+    "ProfileCheckIntervalInMilliseconds": 5000,
     "ConcurrentProfileChecks": 2
   }
 }
