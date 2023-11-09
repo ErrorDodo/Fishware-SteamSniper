@@ -11,7 +11,7 @@ declare module "settings" {
   }
 
   export interface AppSettings {
-    ProfileCheckInterval: number;
+    ProfileCheckIntervalInMilliseconds: number;
     ConcurrentProfileChecks: number;
   }
 }

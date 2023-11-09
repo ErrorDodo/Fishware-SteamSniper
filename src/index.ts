@@ -46,7 +46,7 @@ steamLoginManager
     logger.info("All accounts are initialized.");
     checkProfiles();
     // Run the profile check every 5 seconds
-    setInterval(checkProfiles, appSettings.ProfileCheckInterval);
+    setInterval(checkProfiles, appSettings.ProfileCheckIntervalInMilliseconds);
   })
   .catch((error) => {
     logger.error("Failed to initialize one or more Steam logins:", error);

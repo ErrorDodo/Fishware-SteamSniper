@@ -4,33 +4,64 @@ import { LoginOptions } from "steamcommunity";
 
 const settingsFilePath = "./config/settings.json";
 
-export const getProfileUrlsFromFile = (): string[] => {
-  const rawData = fs.readFileSync(settingsFilePath, "utf-8");
-  const settings: Settings = JSON.parse(rawData);
+const doesSettingsFileExist = (): boolean => {
+  return fs.existsSync(settingsFilePath);
+};
 
-  return settings.profiles;
+export const getProfileUrlsFromFile = (): string[] => {
+  if (!doesSettingsFileExist()) {
+    throw new Error("Settings file does not exist.");
+  }
+  try {
+    const rawData = fs.readFileSync(settingsFilePath, "utf-8");
+    const settings: Settings = JSON.parse(rawData);
+    return settings.profiles;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to parse settings file: ${error.message}`);
+    } else {
+      throw new Error(`Failed to parse settings file: ${String(error)}`);
+    }
+  }
 };
 
 export const getLoginDetailsFromFile = (): LoginOptions[] => {
-  const rawData = fs.readFileSync(settingsFilePath, "utf-8");
-  const settings: Settings = JSON.parse(rawData);
+  if (!doesSettingsFileExist()) {
+    throw new Error("Settings file does not exist.");
+  }
+  try {
+    const rawData = fs.readFileSync(settingsFilePath, "utf-8");
+    const settings: Settings = JSON.parse(rawData);
 
-  return settings.accounts.map((account: Account): LoginOptions => {
-    return {
-      accountName: account.username, // Rename username to accountName
-      password: account.password,
-    };
-  });
+    return settings.accounts.map((account: Account): LoginOptions => {
+      return {
+        accountName: account.username, // Rename username to accountName
+        password: account.password,
+      };
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to parse settings file: ${error.message}`);
+    } else {
+      throw new Error(`Failed to parse settings file: ${String(error)}`);
+    }
+  }
 };
 
 export const getAppSettingsFromFile = (): AppSettings => {
-  const rawData = fs.readFileSync(settingsFilePath, "utf-8");
-  const settings: Settings = JSON.parse(rawData);
+  if (!doesSettingsFileExist()) {
+    throw new Error("Settings file does not exist.");
+  }
+  try {
+    const rawData = fs.readFileSync(settingsFilePath, "utf-8");
+    const settings: Settings = JSON.parse(rawData);
 
-  const appSettings: AppSettings = {
-    ...settings.settings,
-    ProfileCheckInterval: settings.settings.ProfileCheckInterval * 1000, // Convert seconds to milliseconds
-  };
-
-  return appSettings;
+    return settings.settings;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to parse settings file: ${error.message}`);
+    } else {
+      throw new Error(`Failed to parse settings file: ${String(error)}`);
+    }
+  }
 };

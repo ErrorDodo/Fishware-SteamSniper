@@ -19,7 +19,7 @@
     }
   ],
   "settings": {
-    "ProfileCheckIntervalInSeconds": 5,
+    "ProfileCheckIntervalInMilliseconds": 5000,
     "ConcurrentProfileChecks": 2
   }
 }
