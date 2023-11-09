@@ -91,6 +91,10 @@ const checkProfiles = async () => {
           profileUrl: profileUrl,
           account: accountToUse,
         };
+
+        logger.info(
+          `Placing account ${accountToUse.accountName} to snipe ${profileUrl} in queue.`
+        );
         profileQueue.addTask(task);
       }
     });
