@@ -13,10 +13,8 @@ const steamLoginManager = new SteamLoginManager(logger);
 let profileUrls = getProfileUrlsFromFile();
 const appSettings = getAppSettingsFromFile();
 
-// We can do whatever we want with this callback now
-// For Example:
-//        Log the profile URL that was snipped into a file
 const onProfileClaimed = (profileUrl: string, accountName: string) => {
+  // TODO: Look into why onProfileClaimed is not creating a file
   const claimedProfilesFilePath = "./claimedProfiles.json";
   const claimedProfiles = JSON.parse(
     fs.readFileSync(claimedProfilesFilePath, "utf-8")
